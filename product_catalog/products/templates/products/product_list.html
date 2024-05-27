@@ -25,9 +25,10 @@
             {% for product in products %}
             <tr>
                 <td>{{ product.name }}</td>
+                <td>{{ product.vendor }}</td>
                 <td>{{ product.category }}</td>
                 <td>{{ product.version }}</td>
-                <td>{{ product.website }}</td>
+                <td><a href={{ product.website }} >{{ product.website }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
