@@ -1,6 +1,7 @@
 # products/models.py
 from django.db import models
 from .enums import Category
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     vendor = models.CharField(blank=True, null=True)
