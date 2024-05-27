@@ -44,7 +44,7 @@ def run():
 
                         category = Category.APPLICATION.value if part=='a' else Category.HARDWARE.value if part=="h" else Category.OS.value
 						
-                        cpe_detail = {'name':tagContent, 'vendor':vendor, 'category':category, 'version':version, 'website':cpe_url}
+                        cpe_detail = {'name':product, 'vendor':vendor, 'category':category, 'version':version, 'cpe_name':tagContent, 'website':cpe_url}
 
                         Product.objects.create(**cpe_detail)
                 else:
