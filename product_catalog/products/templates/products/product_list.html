@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -36,4 +36,61 @@
         </tbody>
     </table>
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Product List</h1>
+    <form method="GET" action="{% url 'product_list' %}" class="formSearch">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search">
+        <button type="submit">Search</button>
+    </form><br />
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Vendor</th>
+                <th>Category</th>
+                <th>Version</th>
+                <th>Website</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in page_obj %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.vendor }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.version }}</td>
+                <td><a href="{{ product.website }}">{{ product.website }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br />
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Précédent</a>
+        {% endif %}
+        
+        Page {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Suivant</a>
+        {% endif %}
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Dernière Page</a>
+    </div>
+    <br />
+</body>
 </html>
+
