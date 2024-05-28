@@ -21,6 +21,7 @@
                 <th>Category</th>
                 <th>Version</th>
                 <th>Website</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +31,8 @@
                 <td>{{ product.vendor }}</td>
                 <td>{{ product.category }}</td>
                 <td>{{ product.version }}</td>
-                <td><a href="{{ product.website }}">{{ product.website }}</a></td>
+                <td><a href="{{ product.website }}">{{ product.cpe_name }}</a></td>
+                <td><a href="#"><button>Voir les vulnérabilités</button></a></td>
             </tr>
             {% endfor %}
         </tbody>
