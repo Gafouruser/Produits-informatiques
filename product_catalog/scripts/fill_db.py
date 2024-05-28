@@ -53,9 +53,8 @@ def retrieveCVEsPerCPE_(product_object, product_cpe_name, product_name):
     nvd_api = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName={product_cpe_name}"
 
     session = requests.Session()
-    nvd_api_response = session.get(nvd_api).text
+    nvd_api_response = session.get(nvd_api).json()
     if nvd_api_response:
-        nvd_api_response = nvd_api_response.json()
         vulnerabilities = nvd_api_response['vulnerabilities']
 
         for aVulnDetail in vulnerabilities:
