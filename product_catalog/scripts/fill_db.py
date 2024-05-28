@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from products.models import Product, Vulnerability
 from products.enums import Category
+from concurrent.futures import ThreadPoolExecutor
 
 def run():
     # keyword a une taille comprise entre 3 et 512 caractères
@@ -52,13 +53,15 @@ def retrieveCVEsPerCPE_(product_object, product_cpe_name, product_name):
     nvd_api = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName={product_cpe_name}"
 
     session = requests.Session()
-    nvd_api_response = session.get(nvd_api).json()
-    vulnerabilities = nvd_api_response['vulnerabilities']
+    nvd_api_response = session.get(nvd_api).text
+    if nvd_api_response:
+        nvd_api_response = nvd_api_response.json()
+        vulnerabilities = nvd_api_response['vulnerabilities']
 
-    for aVulnDetail in vulnerabilities:
-        cve_section = aVulnDetail['cve']
-        cve_id = cve_section['id']
-        cve_english_description = [language['value'] for language in cve_section['descriptions'] if language['lang']=='en'][0]
-        product_object.vulnerabilities.add(Vulnerability.objects.get_or_create(name=cve_id, description=cve_english_description)[0])
-    print("     CVEs added....")
+        for aVulnDetail in vulnerabilities:
+            cve_section = aVulnDetail['cve']
+            cve_id = cve_section['id']
+            cve_english_description = [language['value'] for language in cve_section['descriptions'] if language['lang']=='en'][0]
+            product_object.vulnerabilities.add(Vulnerability.objects.get_or_create(name=cve_id, description=cve_english_description)[0])
+        print("     CVEs added....")
     session.close()
