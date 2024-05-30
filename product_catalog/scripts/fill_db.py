@@ -1,13 +1,23 @@
 import re
+import sys
+import os
 import requests
+import django
 from bs4 import BeautifulSoup
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'product_catalog.settings')
+django.setup()
+
+
 from products.models import Product, Vulnerability
 from products.enums import Category
 from concurrent.futures import ThreadPoolExecutor
 
+
 def run():
     # keyword a une taille comprise entre 3 et 512 caractères
-    keywords = ['linux', 'windows']
+    keywords = ['windows']
 
     for keyword in keywords:
         current_index = 0
@@ -37,10 +47,10 @@ def run():
 
                         category = Category.APPLICATION.value if part=='a' else Category.HARDWARE.value if part=="h" else Category.OS.value
 						
-                        cpe_detail = {'name':product, 'vendor':vendor, 'category':category, 'version':version, 'cpe_name':tagContent, 'website':cpe_url}
+                        cpe_detail = {'vendor':vendor, 'category':category, 'version':version, 'cpe_name':tagContent, 'website':cpe_url}
 
                         product_instance = Product.objects.create(**cpe_detail)
-                        retrieveCVEsPerCPE_(product_instance, tagContent, product)
+                       # retrieveCVEsPerCPE_(product_instance, tagContent, product)
                 else:
                     break
 				
@@ -49,18 +59,21 @@ def run():
             current_index += 20
 
 
-def retrieveCVEsPerCPE_(product_object, product_cpe_name, product_name):    
-    nvd_api = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName={product_cpe_name}"
+# def retrieveCVEsPerCPE_(product_object, product_cpe_name, product_name):
+#     nvd_api = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName={product_cpe_name}"
+#
+#     session = requests.Session()
+#     nvd_api_response = session.get(nvd_api).json()
+#     if nvd_api_response:
+#         vulnerabilities = nvd_api_response['vulnerabilities']
+#
+#         for aVulnDetail in vulnerabilities:
+#             cve_section = aVulnDetail['cve']
+#             cve_id = cve_section['id']
+#             cve_english_description = [language['value'] for language in cve_section['descriptions'] if language['lang']=='en'][0]
+#             product_object.vulnerabilities.add(Vulnerability.objects.get_or_create(name=cve_id, description=cve_english_description)[0])
+#         print("     CVEs added....")
+#     session.close()
 
-    session = requests.Session()
-    nvd_api_response = session.get(nvd_api).json()
-    if nvd_api_response:
-        vulnerabilities = nvd_api_response['vulnerabilities']
 
-        for aVulnDetail in vulnerabilities:
-            cve_section = aVulnDetail['cve']
-            cve_id = cve_section['id']
-            cve_english_description = [language['value'] for language in cve_section['descriptions'] if language['lang']=='en'][0]
-            product_object.vulnerabilities.add(Vulnerability.objects.get_or_create(name=cve_id, description=cve_english_description)[0])
-        print("     CVEs added....")
-    session.close()
+run()

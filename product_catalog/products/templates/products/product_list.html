@@ -27,11 +27,11 @@
         <tbody>
             {% for product in page_obj %}
             <tr>
-                <td>{{ product.name }}</td>
+                <td>{{ product.cpe_name }}</td>
                 <td>{{ product.vendor }}</td>
                 <td>{{ product.category }}</td>
                 <td>{{ product.version }}</td>
-                <td><a href="{{ product.website }}">{{ product.cpe_name }}</a></td>
+                <td><a href="{{ product.website }}">{{ product.website }}</a></td>
                 <td><a href="{% url 'vulnerability_product' product.cpe_name %}"><button>Voir les vulnérabilités</button></a></td>
             </tr>
             {% endfor %}
